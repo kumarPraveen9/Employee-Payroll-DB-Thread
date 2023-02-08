@@ -11,7 +11,7 @@ namespace RestSharpTestCase
         public string email { get; set; }
     }
     [TestClass]
-    public class RestSharp
+    public class UnitTest1
     {
         RestClient client;
         [TestInitialize]
@@ -62,6 +62,39 @@ namespace RestSharpTestCase
                 Console.WriteLine(response.Content);
             }
 
-           
+           [TestMethod]
+            public void deleteEmployee()
+            {
+                RestRequest request = new RestRequest("/employees/11", Method.DELETE);
+
+                IRestResponse response = client.Execute(request);
+
+                Assert.AreEqual(response.StatusCode, System.Net.HttpStatusCode.OK);
+                Console.WriteLine(response.Content);
+            }
+        
+            [TestMethod]
+            public void givenEmployee_OnPut_ShouldReturnAddEmployee()
+            {
+                RestRequest request = new RestRequest("/employees/12", Method.PUT);
+                System.Text.Json.Nodes.JsonObject jsonObject = new System.Text.Json.Nodes.JsonObject();
+
+                jsonObject.Add("name", "praveen");
+                jsonObject.Add("email", "prav123@gmail.com");
+
+                request.AddParameter("application/json", jsonObject, ParameterType.RequestBody);
+
+                IRestResponse response = client.Execute(request);
+
+                Assert.AreEqual(response.StatusCode, System.Net.HttpStatusCode.OK);
+
+                Employee dataresponse = JsonConvert.DeserializeObject<Employee>(response.Content);
+
+                Assert.AreEqual("praveen", dataresponse.name);
+                Assert.AreEqual("prav123@gmail.com", dataresponse.email);
+
+                Console.WriteLine(response.Content);
+            }
+
         }
     }
